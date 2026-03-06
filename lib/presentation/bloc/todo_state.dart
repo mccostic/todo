@@ -18,6 +18,7 @@ final class TodoLoading extends TodoState {}
 final class TodoLoaded extends TodoState {
   final List<Todo> todos;
   final TodoFilter filter;
+  final Set<String> togglingIds;
 
   // Computed property — filtered list based on current filter
   List<Todo> get filteredTodo {
@@ -31,15 +32,28 @@ final class TodoLoaded extends TodoState {
   int get completedCount => todos.where((t) => t.isCompleted).length;
   int get activeCount => todos.where((t) => !t.isCompleted).length;
 
-  TodoLoaded({required this.todos, this.filter = TodoFilter.all});
+  bool isToggling(String id) => togglingIds.contains(id);
 
-  TodoLoaded copyWith({List<Todo>? todos, TodoFilter? filter}) {
+  TodoLoaded({
+    required this.todos,
+    this.filter = TodoFilter.all,
+    this.togglingIds = const {},
+  });
+
+  TodoLoaded copyWith({
+    List<Todo>? todos,
+    TodoFilter? filter,
+    Set<String>? togglingIds,
+  }) {
     return TodoLoaded(
-        todos: todos ?? this.todos, filter: filter ?? this.filter);
+      todos: todos ?? this.todos,
+      filter: filter ?? this.filter,
+      togglingIds: togglingIds ?? this.togglingIds,
+    );
   }
 
   @override
-  List<Object?> get props => [todos, filter];
+  List<Object?> get props => [todos, filter, togglingIds];
 }
 
 // Error state
