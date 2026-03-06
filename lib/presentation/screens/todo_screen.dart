@@ -33,8 +33,8 @@ class TodoScreen extends StatelessWidget {
           return switch (state) {
             TodoLoading() =>
               const Center(child: CupertinoActivityIndicator()),
-            TodoLoaded(:final todos, :final activeCount, :final completedCount) =>
-              todos.isEmpty
+            TodoLoaded(:final filteredTodo, :final activeCount, :final completedCount) =>
+              filteredTodo.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -61,9 +61,9 @@ class TodoScreen extends StatelessWidget {
                         Expanded(
                           child: ListView.builder(
                             padding: const EdgeInsets.all(16),
-                            itemCount: todos.length,
+                            itemCount: filteredTodo.length,
                             itemBuilder: (context, index) {
-                              return TodoItem(todo: todos[index]);
+                              return TodoItem(todo: filteredTodo[index]);
                             },
                           ),
                         ),

@@ -74,20 +74,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       final updatedTodos = List<Todo>.from(currentState.todos)..add(todo);
       emit(currentState.copyWith(todos: updatedTodos));
-    } on TodoTitleEmptyException catch (e) {
-      // Business error — title was empty
-      emit(TodoError(message: e.message, code: e.code));
-    } on TodoLimitExceededException catch (e) {
-      // Business error — too many todos
-      emit(TodoError(message: e.message, code: e.code));
-    } on NetworkException catch (e) {
-      emit(TodoError(message: e.message, code: e.code));
-    } on ServerException catch (e) {
-      emit(TodoError(message: e.message, code: e.code));
     } on AppException catch (e) {
       emit(TodoError(message: e.message, code: e.code));
+      emit(currentState);
     } catch (e) {
       emit(TodoError(message: 'Failed to add todo: $e'));
+      emit(currentState);
     }
   }
 
@@ -109,20 +101,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }).toList();
 
       emit(currentState.copyWith(todos: updatedTodos));
-    } on TodoNotFoundException catch (e) {
-      // Business error — todo doesn't exist
-      emit(TodoError(message: e.message, code: e.code));
-    } on TodoAlreadyCompletedException catch (e) {
-      // Business error — already completed
-      emit(TodoError(message: e.message, code: e.code));
-    } on NetworkException catch (e) {
-      emit(TodoError(message: e.message, code: e.code));
-    } on ServerException catch (e) {
-      emit(TodoError(message: e.message, code: e.code));
     } on AppException catch (e) {
       emit(TodoError(message: e.message, code: e.code));
+      emit(currentState);
     } catch (e) {
       emit(TodoError(message: 'Failed to toggle todo: $e'));
+      emit(currentState);
     }
   }
 
@@ -141,17 +125,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           .toList();
 
       emit(currentState.copyWith(todos: updatedTodos));
-    } on TodoNotFoundException catch (e) {
-      // Business error — todo doesn't exist
-      emit(TodoError(message: e.message, code: e.code));
-    } on NetworkException catch (e) {
-      emit(TodoError(message: e.message, code: e.code));
-    } on ServerException catch (e) {
-      emit(TodoError(message: e.message, code: e.code));
     } on AppException catch (e) {
       emit(TodoError(message: e.message, code: e.code));
+      emit(currentState);
     } catch (e) {
       emit(TodoError(message: 'Failed to delete todo: $e'));
+      emit(currentState);
     }
   }
 
