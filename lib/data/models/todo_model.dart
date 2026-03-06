@@ -14,14 +14,13 @@ class TodoModel extends Todo{
   // Create model from JSON map (coming from storage)
   factory TodoModel.fromJson(Map<String, dynamic> json) {
     return TodoModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String? ?? '',
-      // ← API returns is_completed not isCompleted
-      // ← cast explicitly to bool, handle null
+      id: (json['id'] as String?) ?? '',
+      title: (json['title'] as String?) ?? '',
+      description: (json['description'] as String?) ?? '',
       isCompleted: (json['is_completed'] as bool?) ?? false,
-      // ← API returns created_at not createdAt
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
