@@ -9,18 +9,14 @@ class FilterTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
-      // Only rebuild when filter changes, not on every state change
-      buildWhen: (prev, curr) {
-        if (prev is TodoLoaded && curr is TodoLoaded) {
-          return prev.filter != curr.filter;
-        }
-        return false;
+    return BlocSelector<TodoBloc, TodoState, TodoFilter>(
+      selector: (state) {
+        return switch (state) {
+          TodoLoaded(:final filter) => filter,
+          _ => TodoFilter.all,
+        };
       },
-      builder: (context, state) {
-        final currentFilter =
-        state is TodoLoaded ? state.filter : TodoFilter.all;
-
+      builder: (context, currentFilter) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: TodoFilter.values.map((filter) {
@@ -31,7 +27,9 @@ class FilterTabs extends StatelessWidget {
                 label: Text(filter.name.toUpperCase()),
                 selected: isSelected,
                 onSelected: (_) {
-                  context.read<TodoBloc>().add(FilterTodosEvent(filter: filter));
+                  context
+                      .read<TodoBloc>()
+                      .add(FilterTodosEvent(filter: filter));
                 },
               ),
             );

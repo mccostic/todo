@@ -3,50 +3,47 @@ import 'package:todo/presentation/bloc/todo_event.dart';
 
 import '../../domain/entities/todo.dart';
 
-abstract class TodoState extends Equatable{
+sealed class TodoState extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
 // Initial state before anything loads
-class TodoInitial extends TodoState{}
+final class TodoInitial extends TodoState {}
 
 // Loading from storage
-class TodoLoading extends TodoState{}
+final class TodoLoading extends TodoState {}
 
 // Data loaded successfully
-class TodoLoaded extends TodoState{
+final class TodoLoaded extends TodoState {
   final List<Todo> todos;
   final TodoFilter filter;
 
   // Computed property — filtered list based on current filter
-  List<Todo> get filteredTodo{
-    switch (filter){
-      case TodoFilter.active:
-        return todos.where((t) => !t.isCompleted).toList();
-      case TodoFilter.completed:
-        return todos.where((t) => t.isCompleted).toList();
-      case TodoFilter.all:
-        return todos;
-    }
+  List<Todo> get filteredTodo {
+    return switch (filter) {
+      TodoFilter.active => todos.where((t) => !t.isCompleted).toList(),
+      TodoFilter.completed => todos.where((t) => t.isCompleted).toList(),
+      TodoFilter.all => todos,
+    };
   }
 
-  int get completedCount => todos.where((t)=> t.isCompleted).length;
-  int get activeCount => todos.where((t)=> !t.isCompleted).length;
+  int get completedCount => todos.where((t) => t.isCompleted).length;
+  int get activeCount => todos.where((t) => !t.isCompleted).length;
 
   TodoLoaded({required this.todos, this.filter = TodoFilter.all});
 
-  TodoLoaded copyWith({List<Todo>? todos, TodoFilter? filter}){
-    return TodoLoaded(todos: todos ?? this.todos, filter: filter ?? this.filter);
+  TodoLoaded copyWith({List<Todo>? todos, TodoFilter? filter}) {
+    return TodoLoaded(
+        todos: todos ?? this.todos, filter: filter ?? this.filter);
   }
 
   @override
-  List<Object?> get props => [todos,filter];
-
+  List<Object?> get props => [todos, filter];
 }
 
-// lib/presentation/bloc/todo_state.dart
-class TodoError extends TodoState {
+// Error state
+final class TodoError extends TodoState {
   final String message;
   final int? code;
 
