@@ -90,6 +90,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     if (state is! TodoLoaded) return;
     final currentState = state as TodoLoaded;
 
+    // Mark as toggling before the API call
+    emit(currentState.copyWith(
+      togglingIds: {...currentState.togglingIds, event.id},
+    ));
+
     try {
       await toggleTodo(event.id);
 
@@ -100,13 +105,19 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         return todo;
       }).toList();
 
-      emit(currentState.copyWith(todos: updatedTodos));
+      final remainingIds = {...currentState.togglingIds}..remove(event.id);
+      emit(currentState.copyWith(
+        todos: updatedTodos,
+        togglingIds: remainingIds,
+      ));
     } on AppException catch (e) {
+      final remainingIds = {...currentState.togglingIds}..remove(event.id);
       emit(TodoError(message: e.message, code: e.code));
-      emit(currentState);
+      emit(currentState.copyWith(togglingIds: remainingIds));
     } catch (e) {
+      final remainingIds = {...currentState.togglingIds}..remove(event.id);
       emit(TodoError(message: 'Failed to toggle todo: $e'));
-      emit(currentState);
+      emit(currentState.copyWith(togglingIds: remainingIds));
     }
   }
 
