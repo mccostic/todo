@@ -1,26 +1,26 @@
 import 'package:equatable/equatable.dart';
 
-abstract class TodoEvent extends Equatable{
+sealed class TodoEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
 // User opened the app / screen
-class LoadTodoEvent extends TodoEvent{}
+final class LoadTodoEvent extends TodoEvent {}
 
 // User submitted the add form
-class AddTodoEvent extends TodoEvent{
+final class AddTodoEvent extends TodoEvent {
   final String title;
   final String description;
 
   AddTodoEvent({required this.title, required this.description});
 
   @override
-  List<Object?> get props => [title,description];
+  List<Object?> get props => [title, description];
 }
 
 // User tapped the checkbox
-class ToggleTodoEvent extends TodoEvent{
+final class ToggleTodoEvent extends TodoEvent {
   final String id;
   ToggleTodoEvent({required this.id});
 
@@ -29,7 +29,7 @@ class ToggleTodoEvent extends TodoEvent{
 }
 
 // User tapped delete
-class DeleteTodoEvent extends TodoEvent{
+final class DeleteTodoEvent extends TodoEvent {
   final String id;
   DeleteTodoEvent({required this.id});
 
@@ -38,7 +38,7 @@ class DeleteTodoEvent extends TodoEvent{
 }
 
 // User changed filter tab
-class FilterTodosEvent extends TodoEvent{
+final class FilterTodosEvent extends TodoEvent {
   final TodoFilter filter;
 
   FilterTodosEvent({required this.filter});
@@ -46,4 +46,5 @@ class FilterTodosEvent extends TodoEvent{
   @override
   List<Object?> get props => [filter];
 }
-enum TodoFilter {all, active, completed}
+
+enum TodoFilter { all, active, completed }
